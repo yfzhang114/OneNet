@@ -1,0 +1,11 @@
+.DS_Store
+.DS_Store?
+.idea
+*.pyc
+**/__pycache__/
+checkpoints/
+results/
+results1/
+imgs/*
+*.pdf
+*.out
