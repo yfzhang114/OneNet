@@ -4,6 +4,12 @@ This codebase is the official implementation of [`OneNet: Enhancing Time Series 
 
 
 This codebase is mainly based on [FSNet](https://github.com/salesforce/fsnet).
+## Introduction
+
+Online updating of time series forecasting models aims to address the concept drifting problem by efficiently updating forecasting models based on streaming data. Many algorithms are designed for online time series forecasting, with some exploiting cross-variable dependency while others assume independence among variables. Given every data assumption has its own pros and cons in online time series modeling, we propose **On**line **e**nsembling **Net**work (OneNet). It dynamically updates and combines two models, with one focusing on modeling the dependency across the time dimension and the other on cross-variate dependency. Our method incorporates a reinforcement learning-based approach into the traditional online convex programming framework, allowing for the linear combination of the two models with dynamically adjusted weights. OneNet addresses the main shortcoming of classical online learning methods that tend to be slow in adapting to the concept drift. Empirical results show that \abbr reduces online forecasting error by more than $50\%$ compared to the State-Of-The-Art (SOTA) method.
+
+![OneNet](framework.png)
+
 
 ## Requirements
 
