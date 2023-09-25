@@ -1,6 +1,6 @@
 # OneNet: Enhancing Time Series Forecasting Models under Concept Drift by Online Ensembling
 
-This codebase is the official implementation of [`OneNet: Enhancing Time Series Forecasting Models under Concept Drift by Online Ensembling`]() (**NeurIPS 2023 poster**)
+This codebase is the official implementation of [`OneNet: Enhancing Time Series Forecasting Models under Concept Drift by Online Ensembling`](https://arxiv.org/abs/2309.12659) (**NeurIPS 2023 poster**)
 
 
 This codebase is mainly based on [FSNet](https://github.com/salesforce/fsnet).
@@ -10,6 +10,7 @@ Online updating of time series forecasting models aims to address the **concept 
 
 ![OneNet](framework.png)
 
+![OneNet Result](onenet_result.png)
 
 ## Requirements
 
@@ -87,12 +88,12 @@ This source code is released under the MIT license, included [here](LICENSE).
 ### Citation 
 If you find this repo useful, please consider citing: 
 ```
-@inproceedings{
-    anonymous2023onenet,
-    title={OneNet: Enhancing Time Series Forecasting Models under Concept Drift by Online Ensembling},
-    author={Anonymous},
-    booktitle={Thirty-seventh Conference on Neural Information Processing Systems},
-    year={2023},
-    url={https://openreview.net/forum?id=Q25wMXsaeZ}
+@misc{zhang2023onenet,
+      title={OneNet: Enhancing Time Series Forecasting Models under Concept Drift by Online Ensembling}, 
+      author={Yi-Fan Zhang and Qingsong Wen and Xue Wang and Weiqi Chen and Liang Sun and Zhang Zhang and Liang Wang and Rong Jin and Tieniu Tan},
+      year={2023},
+      eprint={2309.12659},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
 }
 ```
