@@ -93,12 +93,11 @@ This source code is released under the MIT license, included [here](LICENSE).
 ### Citation 
 If you find this repo useful, please consider citing: 
 ```
-@misc{zhang2023onenet,
-      title={OneNet: Enhancing Time Series Forecasting Models under Concept Drift by Online Ensembling}, 
-      author={Yi-Fan Zhang and Qingsong Wen and Xue Wang and Weiqi Chen and Liang Sun and Zhang Zhang and Liang Wang and Rong Jin and Tieniu Tan},
-      year={2023},
-      eprint={2309.12659},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG}
+@inproceedings{
+zhang2023onenet,
+title={OneNet: Enhancing Time Series Forecasting Models under Concept Drift by Online Ensembling},
+author={YiFan Zhang and Qingsong Wen and Xue Wang and Weiqi Chen and Liang Sun and Zhang Zhang and Liang Wang and Rong Jin and Tieniu Tan},
+booktitle={Thirty-seventh Conference on Neural Information Processing Systems},
+year={2023}
 }
 ```
