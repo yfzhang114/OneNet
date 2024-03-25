@@ -1,6 +1,6 @@
 # (NeurIPS 2023) OneNet: Enhancing Time Series Forecasting Models under Concept Drift by Online Ensembling
 
-This codebase is the official implementation of [`OneNet: Enhancing Time Series Forecasting Models under Concept Drift by Online Ensembling`](https://arxiv.org/abs/2309.12659) (**NeurIPS 2023**) and [Addressing Concept Shift in Online Time Series Forecasting: Detect-then-Adapt](https://arxiv.org/abs/2403.14949)
+This codebase is the official implementation of [`OneNet: Enhancing Time Series Forecasting Models under Concept Drift by Online Ensembling`](https://arxiv.org/abs/2309.12659) (**NeurIPS 2023**) and [`Addressing Concept Shift in Online Time Series Forecasting: Detect-then-Adapt`](https://arxiv.org/abs/2403.14949)
 
 
 ## 🔥 Update
@@ -22,7 +22,14 @@ Online updating of time series forecasting models aims to address the **concept 
 
 ## Introduction for Detect-then-Adapt
 While numerous algorithms have been developed, most of them focus on model design and updating. In practice, many of these methods struggle with continuous performance regression in the face of accumulated concept drifts over time. We first detects drifting conception and then aggressively adapts the current model to the drifted concepts after the detection for rapid adaption. Our empirical studies across six datasets demonstrate the effectiveness of  in improving model adaptation capability. Notably, compared to a simple Temporal Convolutional Network (TCN) baseline, $D^3A$ reduces the average Mean Squared Error (MSE) by $43.9$%. For the state-of-the-art (SOTA) model, the MSE is reduced by $33.3$%.
+
 ![Detect-then-Adapt](teaser_d3a.png)
+
+1) **Introduce a Concept Detection Framework:** Our framework monitors loss distribution drift, aiming to predict the occurrence of concept drift. This detector provides instructions for our model updating, enhancing model robustness and AI safety, particularly in high-risk tasks.
+
+2) **More realistic Evaluation setting:** We observe that previous benchmarks often presume a substantial overlap in the forecasting target during testing. In this paper, we advocate for the evaluation of online time series forecasting models with delayed feedback, demonstrating a more realistic and challenging assessment.
+
+3) **Strong Empirical Studies:** With 6 datasets, D3A improves model adaptation capability across various methods. For example, compared to a simple TCN baseline, D3A reduces the average MSE by $43.9%$ and MAE by $26.9%$. For the previous SOTA model FSNet, the reductions in MSE and MAE are $33.3%$ and $16.7%$, respectively. In a more challenging real-world experimental setting, D3A consistently outperforms existing methods. For TCN, FSNet, and OneNet, the MSE reductions are $32%$, $33.1%$, and $22.2%$, respectively.
 
 ## Requirements
 
