@@ -5,7 +5,7 @@ This codebase is the official implementation of [`OneNet: Enhancing Time Series 
 
 ## 🔥 Update
 * [2023-09-22]: ⭐️ Paper online. Check out [Detect-then-Adapt](https://arxiv.org/abs/2403.14949) for details.
-* [2023-09-22]: ⭐️ Paper online. Check out [OneNet](https://arxiv.org/abs/2403.05262) for details.
+* [2023-09-22]: ⭐️ Paper online. Check out [OneNet](https://arxiv.org/abs/2309.12659) for details.
 * [2023-09-20]: 🚀🚀 Codes released.
 
 
@@ -28,8 +28,6 @@ While numerous algorithms have been developed, most of them focus on model desig
 1) **Introduce a Concept Detection Framework:** Our framework monitors loss distribution drift, aiming to predict the occurrence of concept drift. This detector provides instructions for our model updating, enhancing model robustness and AI safety, particularly in high-risk tasks.
 
 2) **More realistic Evaluation setting:** We observe that previous benchmarks often presume a substantial overlap in the forecasting target during testing. In this paper, we advocate for the evaluation of online time series forecasting models with delayed feedback, demonstrating a more realistic and challenging assessment.
-
-3) **Strong Empirical Studies:** With 6 datasets, D3A improves model adaptation capability across various methods. For example, compared to a simple TCN baseline, D3A reduces the average MSE by $43.9%$ and MAE by $26.9%$. For the previous SOTA model FSNet, the reductions in MSE and MAE are $33.3%$ and $16.7%$, respectively. In a more challenging real-world experimental setting, D3A consistently outperforms existing methods. For TCN, FSNet, and OneNet, the MSE reductions are $32%$, $33.1%$, and $22.2%$, respectively.
 
 ## Requirements
 
