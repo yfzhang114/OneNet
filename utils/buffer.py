@@ -29,13 +29,15 @@ def reservoir(num_seen_examples: int, buffer_size: int) -> int:
 def ring(num_seen_examples: int, buffer_portion_size: int, task: int) -> int:
     return num_seen_examples % buffer_portion_size + task * buffer_portion_size
 
+def fifo(num_seen_examples: int, buffer_size: int) -> int:
+    return num_seen_examples % buffer_size
 
 class Buffer:
     """
     The memory buffer of rehearsal method.
     """
-    def __init__(self, buffer_size, device, n_tasks=1, mode='reservoir'):
-        assert mode in ['ring', 'reservoir']
+    def __init__(self, buffer_size, device, n_tasks=1, mode='fifo'):
+        assert mode in ['ring', 'reservoir', 'fifo']
         self.buffer_size = buffer_size
         self.device = device
         self.num_seen_examples = 0
@@ -76,7 +78,7 @@ class Buffer:
             self.init_tensors(examples, labels, logits, task_labels)
 
         for i in range(examples.shape[0]):
-            index = reservoir(self.num_seen_examples, self.buffer_size)
+            index = fifo(self.num_seen_examples, self.buffer_size)
             self.num_seen_examples += 1
             if index >= 0:
                 self.examples[index] = examples[i].to(self.device)

@@ -13,7 +13,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 class Dataset_ETT_hour(Dataset):
-    def __init__(self, root_path, flag='train', size=None, 
+    def __init__(self, root_path, flag='train', delay_fb=False, size=None, 
                  features='S', data_path='ETTh1.csv', 
                  target='OT', scale=True, inverse=False, timeenc=0, freq='h', cols=None):
         # size [seq_len, label_len, pred_len]
@@ -36,7 +36,7 @@ class Dataset_ETT_hour(Dataset):
         self.scale = scale
         self.inverse = inverse
         self.timeenc = timeenc
-        self.freq = freq
+        self.freq = freq; self.delay_fb=delay_fb
         
         self.root_path = root_path
         self.data_path = data_path
@@ -66,6 +66,7 @@ class Dataset_ETT_hour(Dataset):
             train_data = df_data[border1s[0]:border2s[0]]
             self.scaler.fit(train_data.values)
             data = self.scaler.transform(df_data.values)
+
         else:
             data = df_data.values
 
@@ -92,11 +93,16 @@ class Dataset_ETT_hour(Dataset):
         self.data_stamp = data_stamp
         
     def __getitem__(self, index):
-        #if self.set_type == 2: pdb.set_trace()
-        s_begin = index 
-        s_end = s_begin + self.seq_len
-        r_begin = s_end - self.label_len 
-        r_end = r_begin + self.label_len + self.pred_len
+        if self.delay_fb and self.set_type==2:
+            s_begin = index * self.pred_len
+            s_end = s_begin + self.seq_len
+            r_begin = s_end - self.label_len 
+            r_end = r_begin + self.label_len + self.pred_len
+        else:
+            s_begin = index 
+            s_end = s_begin + self.seq_len
+            r_begin = s_end - self.label_len 
+            r_end = r_begin + self.label_len + self.pred_len
 
         seq_x = self.data_x[s_begin:s_end]
         if self.inverse:
@@ -109,13 +115,16 @@ class Dataset_ETT_hour(Dataset):
         return seq_x, seq_y, seq_x_mark, seq_y_mark
     
     def __len__(self):
-        return len(self.data_x) - self.seq_len- self.pred_len + 1
+        if self.delay_fb and self.set_type==2:
+            return (len(self.data_x) - self.seq_len- self.pred_len) // self.pred_len
+        else:
+            return len(self.data_x) - self.seq_len- self.pred_len + 1
 
     def inverse_transform(self, data):
         return self.scaler.inverse_transform(data)
 
 class Dataset_ETT_minute(Dataset):
-    def __init__(self, root_path, flag='train', size=None, 
+    def __init__(self, root_path, flag='train', delay_fb=False, size=None, 
                  features='S', data_path='ETTm1.csv', 
                  target='OT', scale=True, inverse=False, timeenc=0, freq='t', cols=None):
         # size [seq_len, label_len, pred_len]
@@ -138,7 +147,7 @@ class Dataset_ETT_minute(Dataset):
         self.scale = scale
         self.inverse = inverse
         self.timeenc = timeenc
-        self.freq = freq
+        self.freq = freq; self.delay_fb=delay_fb
         
         self.root_path = root_path
         self.data_path = data_path
@@ -193,10 +202,16 @@ class Dataset_ETT_minute(Dataset):
         self.data_stamp = data_stamp
     
     def __getitem__(self, index):
-        s_begin = index
-        s_end = s_begin + self.seq_len
-        r_begin = s_end - self.label_len
-        r_end = r_begin + self.label_len + self.pred_len
+        if self.delay_fb and self.set_type==2:
+            s_begin = index * self.pred_len
+            s_end = s_begin + self.seq_len
+            r_begin = s_end - self.label_len 
+            r_end = r_begin + self.label_len + self.pred_len
+        else:
+            s_begin = index 
+            s_end = s_begin + self.seq_len
+            r_begin = s_end - self.label_len 
+            r_end = r_begin + self.label_len + self.pred_len
 
         seq_x = self.data_x[s_begin:s_end]
         if self.inverse:
@@ -209,14 +224,16 @@ class Dataset_ETT_minute(Dataset):
         return seq_x, seq_y, seq_x_mark, seq_y_mark
     
     def __len__(self):
-        return len(self.data_x) - self.seq_len - self.pred_len + 1
-
+        if self.delay_fb and self.set_type==2:
+            return (len(self.data_x) - self.seq_len- self.pred_len) // self.pred_len
+        else:
+            return len(self.data_x) - self.seq_len- self.pred_len + 1
     def inverse_transform(self, data):
         return self.scaler.inverse_transform(data)
 
 
 class Dataset_Custom(Dataset):
-    def __init__(self, root_path, flag='train', size=None, 
+    def __init__(self, root_path, flag='train', delay_fb=False, size=None, 
                  features='S', data_path='ETTh1.csv', 
                  target='OT', scale=True, inverse=False, timeenc=0, freq='h', cols=None):
         # size [seq_len, label_len, pred_len]
@@ -239,7 +256,7 @@ class Dataset_Custom(Dataset):
         self.scale = scale
         self.inverse = inverse
         self.timeenc = timeenc
-        self.freq = freq
+        self.freq = freq; self.delay_fb=delay_fb
         self.cols=cols
         self.root_path = root_path
         self.data_path = data_path
@@ -294,10 +311,16 @@ class Dataset_Custom(Dataset):
         self.data_stamp = data_stamp
     
     def __getitem__(self, index):
-        s_begin = index
-        s_end = s_begin + self.seq_len
-        r_begin = s_end - self.label_len 
-        r_end = r_begin + self.label_len + self.pred_len
+        if self.delay_fb and self.set_type==2:
+            s_begin = index * self.pred_len
+            s_end = s_begin + self.seq_len
+            r_begin = s_end - self.label_len 
+            r_end = r_begin + self.label_len + self.pred_len
+        else:
+            s_begin = index 
+            s_end = s_begin + self.seq_len
+            r_begin = s_end - self.label_len 
+            r_end = r_begin + self.label_len + self.pred_len
 
         seq_x = self.data_x[s_begin:s_end]
         if self.inverse:
@@ -310,13 +333,16 @@ class Dataset_Custom(Dataset):
         return seq_x, seq_y, seq_x_mark, seq_y_mark
     
     def __len__(self):
-        return len(self.data_x) - self.seq_len- self.pred_len + 1
+        if self.delay_fb and self.set_type==2:
+            return (len(self.data_x) - self.seq_len- self.pred_len) // self.pred_len
+        else:
+            return len(self.data_x) - self.seq_len- self.pred_len + 1
 
     def inverse_transform(self, data):
         return self.scaler.inverse_transform(data)
 
 class Dataset_Pred(Dataset):
-    def __init__(self, root_path, flag='pred', size=None, 
+    def __init__(self, root_path, flag='pred',  delay_fb=False,  size=None, 
                  features='S', data_path='ETTh1.csv', 
                  target='OT', scale=True, inverse=False, timeenc=0, freq='15min', cols=None):
         # size [seq_len, label_len, pred_len]
@@ -337,7 +363,7 @@ class Dataset_Pred(Dataset):
         self.scale = scale
         self.inverse = inverse
         self.timeenc = timeenc
-        self.freq = freq
+        self.freq = freq; self.delay_fb=delay_fb
         self.cols=cols
         self.root_path = root_path
         self.data_path = data_path
@@ -388,10 +414,16 @@ class Dataset_Pred(Dataset):
         self.data_stamp = data_stamp
     
     def __getitem__(self, index):
-        s_begin = index
-        s_end = s_begin + self.seq_len
-        r_begin = s_end - self.label_len
-        r_end = r_begin + self.label_len + self.pred_len
+        if self.delay_fb and self.set_type==2:
+            s_begin = index * self.pred_len
+            s_end = s_begin + self.seq_len
+            r_begin = s_end - self.label_len 
+            r_end = r_begin + self.label_len + self.pred_len
+        else:
+            s_begin = index 
+            s_end = s_begin + self.seq_len
+            r_begin = s_end - self.label_len 
+            r_end = r_begin + self.label_len + self.pred_len
 
         seq_x = self.data_x[s_begin:s_end]
         if self.inverse:
@@ -404,7 +436,10 @@ class Dataset_Pred(Dataset):
         return seq_x, seq_y, seq_x_mark, seq_y_mark
     
     def __len__(self):
-        return len(self.data_x) - self.seq_len + 1
+        if self.delay_fb and self.set_type==2:
+            return (len(self.data_x) - self.seq_len- self.pred_len) // self.pred_len
+        else:
+            return len(self.data_x) - self.seq_len- self.pred_len + 1
 
     def inverse_transform(self, data):
         return self.scaler.inverse_transform(data)

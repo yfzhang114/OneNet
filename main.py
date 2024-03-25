@@ -168,6 +168,21 @@ parser.add_argument('--period_len', type=int, default=12)
 parser.add_argument('--mlp_depth', type=int, default=3)
 parser.add_argument('--mlp_width', type=int, default=256)
 parser.add_argument('--station_lr', type=float, default=0.0001)
+
+
+parser.add_argument('--sleep_interval', type=int, default=1, help='latent dimension of koopman embedding')
+parser.add_argument('--sleep_epochs', type=int, default=1, help='latent dimension of koopman embedding')
+parser.add_argument('--sleep_kl_pre', type=float, default=0, help='latent dimension of koopman embedding')
+parser.add_argument('--delay_fb', action='store_true', default=False, help='use delayed feedback')
+parser.add_argument('--online_adjust', type=float, default=0.0, help='latent dimension of koopman embedding')
+parser.add_argument('--offline_adjust', type=float, default=0.0, help='latent dimension of koopman embedding')
+parser.add_argument('--online_adjust_var', type=float, default=0.0, help='latent dimension of koopman embedding')
+parser.add_argument('--var_weight', type=float, default=0.0, help='latent dimension of koopman embedding')
+parser.add_argument('--alpha_w', type=float, default=0.0001, help='spectrum filter ratio')
+parser.add_argument('--alpha_d', type=float, default=0.003, help='spectrum filter ratio')
+parser.add_argument('--test_lr', type=float, default=0.1, help='spectrum filter ratio')
+
+
 args = parser.parse_args()
 
 args.use_gpu = True if torch.cuda.is_available() and args.use_gpu else False

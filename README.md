@@ -1,10 +1,15 @@
 # (NeurIPS 2023) OneNet: Enhancing Time Series Forecasting Models under Concept Drift by Online Ensembling
 
-This codebase is the official implementation of [`OneNet: Enhancing Time Series Forecasting Models under Concept Drift by Online Ensembling`](https://arxiv.org/abs/2309.12659) (**NeurIPS 2023**)
+This codebase is the official implementation of [`OneNet: Enhancing Time Series Forecasting Models under Concept Drift by Online Ensembling`](https://arxiv.org/abs/2309.12659) (**NeurIPS 2023**) and [Addressing Concept Shift in Online Time Series Forecasting: Detect-then-Adapt](https://arxiv.org/abs/2403.14949)
 
 
-This codebase is mainly based on [FSNet](https://github.com/salesforce/fsnet).
-## Introduction
+## 🔥 Update
+* [2023-09-22]: ⭐️ Paper online. Check out [Detect-then-Adapt](https://arxiv.org/abs/2403.14949) for details.
+* [2023-09-22]: ⭐️ Paper online. Check out [OneNet](https://arxiv.org/abs/2403.05262) for details.
+* [2023-09-20]: 🚀🚀 Codes released.
+
+
+## Introduction for OneNet
 
 Online updating of time series forecasting models aims to address the **concept drifting problem** by efficiently updating forecasting models based on streaming data. Many algorithms are designed for online time series forecasting, with some exploiting **cross-variable dependency** while others assume **independence among variables**. Given every data assumption has its own pros and cons in online time series modeling, we propose **On**line **e**nsembling **Net**work (**OneNet**). It dynamically updates and combines two models, with one focusing on modeling the dependency across the time dimension and the other on cross-variate dependency. Our method incorporates a reinforcement learning-based approach into the traditional online convex programming framework, allowing for the linear combination of the two models with dynamically adjusted weights. **OneNet** addresses the main shortcomings of classical online learning methods that tend to be slow in adapting to the concept drift. Empirical results show that OneNet reduces online forecasting error by more than $50$% compared to the State-Of-The-Art (SOTA) method.
 
@@ -15,7 +20,9 @@ Online updating of time series forecasting models aims to address the **concept 
 3) The average MSE and MAE of OneNet are significantly better than using either branch (FSNet or Time-TCN) alone, which underscores the significance of incorporating online ensembling. 
 4) OneNet achieves faster and better convergence than other methods;
 
-![OneNet Result](onenet_result.png)
+## Introduction for Detect-then-Adapt
+While numerous algorithms have been developed, most of them focus on model design and updating. In practice, many of these methods struggle with continuous performance regression in the face of accumulated concept drifts over time. We first detects drifting conception and then aggressively adapts the current model to the drifted concepts after the detection for rapid adaption. Our empirical studies across six datasets demonstrate the effectiveness of  in improving model adaptation capability. Notably, compared to a simple Temporal Convolutional Network (TCN) baseline, $D^3A$ reduces the average Mean Squared Error (MSE) by $43.9$%. For the state-of-the-art (SOTA) model, the MSE is reduced by $33.3$%.
+![Detect-then-Adapt](teaser_d3a.png)
 
 ## Requirements
 
@@ -42,8 +49,13 @@ To replicate our results on the ETT, ECL, Traffic, and WTH datasets, run
 sh run.sh
 ```
 
-### 3.  Arguments
 
+To replicate our results of $D^3A$, run
+```
+sh run_d3a.sh
+```
+
+### 3.  Arguments
 
 You can specify one of the above method via the ```--method``` argument.
 
@@ -53,6 +65,16 @@ You can specify one of the above method via the ```--method``` argument.
 - ```--test_bsz```: batch size used for testing: must be set to **1** for online learning,
 - ```--seq_len```: look-back windows' length, set to **60** by default,
 - ```--pred_len```: forecast windows' length, set to **1** for online learning.
+
+
+**D3A Arguments:**
+Here are additional arguments useful for experiments:
+
+- `--sleep_interval`: Corresponds to \( l_w \) in our paper, representing the window size for the drift detector.
+- `--sleep_epochs`: Determines the number of epochs the model should be fully fine-tuned when a drift is detected. It is set to **20** by default.
+- `--online_adjust`: After detecting a drift, the regularization weight \( \lambda \) in our paper is set to **0.5** by default.
+- `--offline_adjust`: During each step, the algorithm samples previous data and augments it for regularization. The regularization weight is set to **0.5** by default.
+- `--alpha_d`: Represents a predefined confidence level for triggering concept drift, set to **0.003** by default.
 
 ### 4.  Baselines
 
@@ -81,10 +103,15 @@ You can specify one of the above method via the ```--method``` argument.
 - nomem: FSNET without the associative memory
 - naive: FSNET without both the memory and adapter, directly trains the adaptation coefficients.
 - fsnet: FSNet framework
+- fsnet_d3a: FSNet with Detect-then-Adapt framework
 - fsnet_time: Cross-Time FSNet
 - onenet_minus: the proposed OneNet- in section 4
 - onenet_tcn: the proposed OneNet with tcn backbone
 - onenet_fsnet: the proposed OneNet 
+- onenet_d3a: the proposed OneNet with Detect-then-Adapt framework
+
+
+### 5.  Baselines
 
 ## License
 
@@ -94,10 +121,19 @@ This source code is released under the MIT license, included [here](LICENSE).
 If you find this repo useful, please consider citing: 
 ```
 @inproceedings{
-zhang2023onenet,
-title={OneNet: Enhancing Time Series Forecasting Models under Concept Drift by Online Ensembling},
-author={YiFan Zhang and Qingsong Wen and Xue Wang and Weiqi Chen and Liang Sun and Zhang Zhang and Liang Wang and Rong Jin and Tieniu Tan},
-booktitle={Thirty-seventh Conference on Neural Information Processing Systems},
-year={2023}
+    zhang2023onenet,
+    title={OneNet: Enhancing Time Series Forecasting Models under Concept Drift by Online Ensembling},
+    author={YiFan Zhang and Qingsong Wen and Xue Wang and Weiqi Chen and Liang Sun and Zhang Zhang and Liang Wang and Rong Jin and Tieniu Tan},
+    booktitle={Thirty-seventh Conference on Neural Information Processing Systems},
+    year={2023}
+}
+
+@misc{zhang2024addressing,
+      title={Addressing Concept Shift in Online Time Series Forecasting: Detect-then-Adapt}, 
+      author={YiFan Zhang and Weiqi Chen and Zhaoyang Zhu and Dalin Qin and Liang Sun and Xue Wang and Qingsong Wen and Zhang Zhang and Liang Wang and Rong Jin},
+      year={2024},
+      eprint={2403.14949},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
 }
 ```
