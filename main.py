@@ -71,9 +71,11 @@ def init_dl_program(
 def parse_args():
     parser = argparse.ArgumentParser(description='[Informer] Long Sequences Forecasting')
 
-    parser.add_argument('--data', type=str, required=True, default='ETTh1', help='data')
-    parser.add_argument('--root_path', type=str, default='./data/ETT/', help='root path of the data file')
-    parser.add_argument('--data_path', type=str, default='ETTh1.csv', help='data file')
+    parser = argparse.ArgumentParser(description='[Informer] Long Sequences Forecasting')
+
+    parser.add_argument('--data', type=str, default='ETTh2', help='data')
+    parser.add_argument('--root_path', type=str, default='./data/', help='root path of the data file')
+    parser.add_argument('--data_path', type=str, default='ETTh2.csv', help='data file')
     parser.add_argument('--features', type=str, default='M',
                         help='forecasting task, options:[M, S, MS]; M:multivariate predict multivariate, S:univariate predict univariate, MS:multivariate predict univariate')
     parser.add_argument('--target', type=str, default='OT', help='target feature in S or MS task')
@@ -82,19 +84,19 @@ def parse_args():
     parser.add_argument('--checkpoints', type=str, default='./checkpoints/', help='location of model checkpoints')
 
     parser.add_argument('--seq_len', type=int, default=96, help='input sequence length of Informer encoder')
-    parser.add_argument('--label_len', type=int, default=48, help='start token length of Informer decoder')
-    parser.add_argument('--pred_len', type=int, default=24, help='prediction sequence length')
+    parser.add_argument('--label_len', type=int, default=0, help='start token length of Informer decoder')
+    parser.add_argument('--pred_len', type=int, default=1, help='prediction sequence length')
     # Informer decoder input: concat[start token series(label_len), zero padding series(pred_len)]
-    parser.add_argument('--gamma', type=float, default=0.9)
+
     parser.add_argument('--enc_in', type=int, default=7, help='encoder input size')
     parser.add_argument('--dec_in', type=int, default=7, help='decoder input size')
     parser.add_argument('--c_out', type=int, default=7, help='output size')
-    parser.add_argument('--d_model', type=int, default=512, help='dimension of model')
+    parser.add_argument('--d_model', type=int, default=32, help='dimension of model')
     parser.add_argument('--n_heads', type=int, default=8, help='num of heads')
     parser.add_argument('--e_layers', type=int, default=2, help='num of encoder layers')
     parser.add_argument('--d_layers', type=int, default=1, help='num of decoder layers')
     parser.add_argument('--s_layers', type=str, default='3,2,1', help='num of stack encoder layers')
-    parser.add_argument('--d_ff', type=int, default=2048, help='dimension of fcn')
+    parser.add_argument('--d_ff', type=int, default=128, help='dimension of fcn')
     parser.add_argument('--factor', type=int, default=5, help='probsparse attn factor')
     parser.add_argument('--padding', type=int, default=0, help='padding type')
     parser.add_argument('--distil', action='store_false',
@@ -111,24 +113,45 @@ def parse_args():
     parser.add_argument('--cols', type=str, nargs='+', help='certain cols from the data files as the input features')
     parser.add_argument('--num_workers', type=int, default=0, help='data loader num workers')
     parser.add_argument('--itr', type=int, default=2, help='experiments times')
-    parser.add_argument('--train_epochs', type=int, default=6, help='train epochs')
+    parser.add_argument('--train_epochs', type=int, default=3, help='train epochs')
     parser.add_argument('--batch_size', type=int, default=32, help='batch size of train input data')
     parser.add_argument('--patience', type=int, default=3, help='early stopping patience')
-    parser.add_argument('--learning_rate', type=float, default=0.0001, help='optimizer learning rate')
+    parser.add_argument('--learning_rate', type=float, default=0.003, help='optimizer learning rate')
+    parser.add_argument('--learning_rate_w', type=float, default=0.001, help='optimizer learning rate')
+    parser.add_argument('--learning_rate_bias', type=float, default=0.001, help='optimizer learning rate')
+    parser.add_argument('--weight_decay', type=float, default=1e-3, help='optimizer learning rate')
     parser.add_argument('--des', type=str, default='test', help='exp description')
     parser.add_argument('--loss', type=str, default='mse', help='loss function')
     parser.add_argument('--lradj', type=str, default='type1', help='adjust learning rate')
     parser.add_argument('--use_amp', action='store_true', help='use automatic mixed precision training', default=False)
     parser.add_argument('--inverse', action='store_true', help='inverse output data', default=False)
-    parser.add_argument('--method', type=str, default='online')
+    parser.add_argument('--method', type=str, default='onenet_fsnet')
+
+    # PatchTST
+    parser.add_argument('--fc_dropout', type=float, default=0.05, help='fully connected dropout')
+    parser.add_argument('--head_dropout', type=float, default=0.0, help='head dropout')
+    parser.add_argument('--patch_len', type=int, default=16, help='patch length')
+    parser.add_argument('--stride', type=int, default=8, help='stride')
+    parser.add_argument('--padding_patch', default='end', help='None: None; end: padding on the end')
+    parser.add_argument('--revin', type=int, default=0, help='RevIN; True 1 False 0')
+    parser.add_argument('--affine', type=int, default=0, help='RevIN-affine; True 1 False 0')
+    parser.add_argument('--subtract_last', type=int, default=0, help='0: subtract mean; 1: subtract last')
+    parser.add_argument('--decomposition', type=int, default=0, help='decomposition; True 1 False 0')
+    parser.add_argument('--kernel_size', type=int, default=25, help='decomposition-kernel')
+    parser.add_argument('--tcn_output_dim', type=int, default=320, help='decomposition-kernel')
+    parser.add_argument('--tcn_layer', type=int, default=2, help='decomposition-kernel')
+    parser.add_argument('--tcn_hidden', type=int, default=160, help='decomposition-kernel')
+    parser.add_argument('--individual', type=int, default=1, help='individual head; True 1 False 0')
 
     parser.add_argument('--teacher_forcing', action='store_true', help='use teacher forcing during forecasting',
                         default=False)
     parser.add_argument('--online_learning', type=str, default='full')
     parser.add_argument('--opt', type=str, default='adam')
 
-    parser.add_argument('--test_bsz', type=int, default=-1)
+    parser.add_argument('--test_bsz', type=int, default=1)
     parser.add_argument('--n_inner', type=int, default=1)
+    parser.add_argument('--channel_cross', type=bool, default=False)
+
     parser.add_argument('--use_gpu', type=bool, default=True, help='use gpu')
     parser.add_argument('--gpu', type=int, default=0, help='gpu')
     parser.add_argument('--use_multi_gpu', action='store_true', help='use multiple gpus', default=False)
@@ -137,6 +160,41 @@ def parse_args():
     parser.add_argument('--finetune', action='store_true', default=False)
     parser.add_argument('--finetune_model_seed', type=int)
 
+    parser.add_argument('--aug', type=int, default=0, help='Training with augmentation data aug iterations')
+    parser.add_argument('--lr_test', type=float, default=1e-3, help='learning rate during test')
+
+    # supplementary config for FEDformer model
+    parser.add_argument('--version', type=str, default='Wavelets',
+                        help='for FEDformer, there are two versions to choose, options: [Fourier, Wavelets]')
+    parser.add_argument('--mode_select', type=str, default='random',
+                        help='for FEDformer, there are two mode selection method, options: [random, low]')
+    parser.add_argument('--modes', type=int, default=64, help='modes to be selected random 64')
+    parser.add_argument('--L', type=int, default=3, help='ignore level')
+    parser.add_argument('--base', type=str, default='legendre', help='mwt base')
+    parser.add_argument('--cross_activation', type=str, default='tanh',
+                        help='mwt cross atention activation function tanh or softmax')
+    parser.add_argument('--moving_avg', default=[24], help='window size of moving average')
+
+    parser.add_argument('--gamma', type=float, default=0.1)
+    parser.add_argument('--m', type=int, default=24)
+    parser.add_argument('--loss_aug', type=float, default=0.5, help='weight for augmentation loss')
+    parser.add_argument('--use_adbfgs', action='store_true', help='use the Adbfgs optimizer', default=True)
+    parser.add_argument('--period_len', type=int, default=12)
+    parser.add_argument('--mlp_depth', type=int, default=3)
+    parser.add_argument('--mlp_width', type=int, default=256)
+    parser.add_argument('--station_lr', type=float, default=0.0001)
+
+    parser.add_argument('--sleep_interval', type=int, default=1, help='latent dimension of koopman embedding')
+    parser.add_argument('--sleep_epochs', type=int, default=1, help='latent dimension of koopman embedding')
+    parser.add_argument('--sleep_kl_pre', type=float, default=0, help='latent dimension of koopman embedding')
+    parser.add_argument('--delay_fb', action='store_true', default=False, help='use delayed feedback')
+    parser.add_argument('--online_adjust', type=float, default=0.0, help='latent dimension of koopman embedding')
+    parser.add_argument('--offline_adjust', type=float, default=0.0, help='latent dimension of koopman embedding')
+    parser.add_argument('--online_adjust_var', type=float, default=0.0, help='latent dimension of koopman embedding')
+    parser.add_argument('--var_weight', type=float, default=0.0, help='latent dimension of koopman embedding')
+    parser.add_argument('--alpha_w', type=float, default=0.0001, help='spectrum filter ratio')
+    parser.add_argument('--alpha_d', type=float, default=0.003, help='spectrum filter ratio')
+    parser.add_argument('--test_lr', type=float, default=0.1, help='spectrum filter ratio')
     args = parser.parse_args()
 
     args.use_gpu = True if torch.cuda.is_available() and args.use_gpu else False
